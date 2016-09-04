@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration status="error">
+	<!--先定义所有的appender -->
+	<appenders>
+		<!--这个输出控制台的配置 -->
+		<Console name="SYSOUT" target="SYSTEM_OUT">
+			<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+			<ThresholdFilter level="info" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<!--这个都知道是输出日志的格式 -->
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%-5level] %highlight{%msg} <%M() %class:%L>%n%throwable" />
+		</Console>
+
+		<!--这个会打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 -->
+		<RollingFile name="info_log" fileName="/vilya/repo/info.log"
+			filePattern="/vilya/repo/info.%d{yyyy-MM-dd}.log">
+			<ThresholdFilter level="info" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} [%-5level] %msg <%M() %class{36}:%L>%n%throwable" />
+			<Policies>
+				<!-- 每1天更新一次，此处查阅网上和官方示例中，都是以小时出现，我测试是以天为单位。（官方文档中说明按item类型是否是小时，但没找到在哪里设置item类型）另有其他各类型策略，请参阅官方文档 -->
+				<TimeBasedTriggeringPolicy modulate="true"
+					interval="1" />
+				<!-- 此处为每个文件大小策略限制，使用它一般会在文件中filePattern采用%i模式 -->
+				<!-- <SizeBasedTriggeringPolicy size="128KB" /> -->
+			</Policies>
+		</RollingFile>
+
+		<RollingFile name="error_log" fileName="/vilya/repo/error.log"
+			filePattern="/vilya/repo/error.%d{yyyy-MM-dd}.log">
+			<ThresholdFilter level="info" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} [%-5level] %msg <%M() %class{36}:%L>%n%throwable" />
+			<Policies>
+				<!-- 每1天更新一次，此处查阅网上和官方示例中，都是以小时出现，我测试是以天为单位。（官方文档中说明按item类型是否是小时，但没找到在哪里设置item类型）另有其他各类型策略，请参阅官方文档 -->
+				<TimeBasedTriggeringPolicy modulate="true"
+					interval="1" />
+				<!-- 此处为每个文件大小策略限制，使用它一般会在文件中filePattern采用%i模式 -->
+				<!-- <SizeBasedTriggeringPolicy size="128KB" /> -->
+			</Policies>
+		</RollingFile>
+	</appenders>
+	<!--然后定义logger，只有定义了logger并引入的appender，appender才会生效 -->
+	<loggers>
+		<!--建立一个默认的root的logger -->
+		<root level="info">
+			<appender-ref ref="log" />
+			<appender-ref ref="SYSOUT" />
+		</root>
+
+	</loggers>
+</configuration>
